@@ -1,0 +1,38 @@
+{% extends "sys/admin-index.html" %}
+{% block content %}
+    <div class="admin-content-body">
+        <div class="am-cf am-padding am-padding-bottom-0">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">内容设置</strong> /
+                <small>电影组</small>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="am-g">
+            <div class="am-u-sm-12 am-u-md-8">
+                <div class="am-panel am-panel-success">
+                    <header class="am-panel-hd">
+                        <h3 class="am-panel-title">提示</h3>
+                    </header>
+
+                    <div class="am-panel-bd">
+                        添加 电影组 成功
+                    </div>
+
+                    <div class="am-panel-footer">
+                        <input type="button" class="am-btn-success" value="确定" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<script>
+    $(document).ready(function () {
+        $(".am-btn-success").on("click", function () {
+            location = "/sys/filmgroup";
+        });
+    });
+</script>

@@ -1,0 +1,51 @@
+{% extends "sys/admin-index.html" %}
+
+{% block head %}
+    {{ super() }}
+
+    <script>
+        $(document).ready(function () {
+            $(".am-btn").on("click", function () {
+                $(".am-form").submit();
+            });
+        });
+    </script>
+{% endblock head %}
+
+{% block content %}
+    <div class="admin-content-body">
+        <div class="am-cf am-padding am-padding-bottom-0">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">内容设置</strong> /
+                <small>电影组</small>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="am-g">
+            <div class="am-u-sm-12 am-u-md-8">
+                <form class="am-form am-form-horizontal" action="/sys/filmgroup" method="post">
+                    <div class="am-form-group">
+                        <label for="filmgroup-name" class="am-u-sm-3 am-form-label">名称</label>
+                        <div class="am-u-sm-9">
+                            <input type="text" id="filmgroup-name" name="filmgroup-name" placeholder="电影组名称">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <label for="filmgroup-intro" class="am-u-sm-3 am-form-label">简介</label>
+                        <div class="am-u-sm-9">
+                            <textarea class="" rows="5" id="filmgroup-intro" name="filmgroup-intro" placeholder="电影组简介"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group">
+                        <div class="am-u-sm-9 am-u-sm-push-3">
+                            <button type="button" class="am-btn am-btn-primary">保存修改</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
