@@ -1,3 +1,4 @@
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase
 
@@ -83,6 +84,3 @@ class FilmGroup(db.Model):
             id=self.id, name=self.name, intro=self.intro,
             create=self.create_time, modify=self.modify_time
         )
-
-if __name__ == "__main__":
-    db.create_all()
