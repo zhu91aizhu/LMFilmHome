@@ -1,5 +1,4 @@
 from flask import Flask
-
 from flask import request
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -7,19 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from models import FilmGroup
 
 app = Flask(__name__)
-
-
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/lm_film_home.db"
 db = SQLAlchemy(app)
-
-
-
-
-
-
-
-
-
 
 @app.route('/')
 def hello_world():
