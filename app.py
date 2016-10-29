@@ -9,6 +9,16 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/lm_film_home.db"
 db = SQLAlchemy(app)
 
+def short_intro(intro):
+    if (len(intro) > 32):
+        intro = intro[:32] + "..."
+
+    return intro
+
+def register_filter():
+    env = app.jinja_env
+    env.filters["short_intro"] = short_intro
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
@@ -21,41 +31,33 @@ def sys_index():
 def sys_user():
     return render_template("sys/admin-user.html")
 
-@app.route("/sys/filmgroup/new", methods=["GET"])
-def sys_filmgroup():
-    return render_template("sys/admin-filmgroup.html")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@app.route("/sys/filmgroup", methods=["GET"])
+def get_filmgroups():
+    """获取电影组列表"""
+    fgs = FilmGroup.query.all()
+    return render_template("sys/filmgroups.html", filmgroups=fgs)
 
 @app.route("/sys/filmgroup", methods=["POST"])
-def sys_add_filmgroup():
+def add_filmgroup():
+    """添加电影组"""
+    name = request.form["name"]
+    intro = request.form["intro"]
+
     try:
-        name = request.form["filmgroup-name"]
-        intro = request.form["filmgroup-intro"]
+        fg = FilmGroup(name, intro)
+        db.session.add(fg)
+        db.session.commit()
+    except Exception as e:
+        print ("error msg: %s" % e)
+        return "failure"
 
-        filmgroup = FilmGroup(name, intro)
-        db.session.add(filmgroup)
-        db.session.submit()
-        template = "sys/admin-filmgroup-add-succ.html"
-    except:
-        print("add filmgroup fail")
-        template = "sys/admin-filmgroup-add-fail.html"
+    return "success"
 
-    return render_template(template)
+@app.route("/sys/filmgroup/new", methods=["GET"])
+def get_filmgroup_form():
+    """获取电影组表单"""
+    return render_template("sys/admin-filmgroup.html")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    register_filter()
     app.run()

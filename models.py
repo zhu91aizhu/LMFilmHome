@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase
 
 import uuid
-import time
+import datetime
 
 db = SQLAlchemy()
 
@@ -67,19 +67,22 @@ class FilmGroup(db.Model):
     intro = db.Column(db.Text)
     create_time = db.Column(db.TIMESTAMP)
     modify_time = db.Column(db.TIMESTAMP)
+    content_count = db.Column(db.Integer, default=0)
 
     def __init__(self, name, intro):
         super(FilmGroup, self).__init__()
 
-        self.id = uuid.uuid1()
+        self.id = str(uuid.uuid1())
         self.name = name
         self.intro = intro
-        self.create_time = time.time()
+        self.create_time = datetime.datetime.now()
         self.modify_time = None
+        self.content_count = 0
 
     def __repr__(self):
         return "<FilmGroup id:{id}, name={name}, intro={intro}, \
-            create={create}, modify={modify}".format(
+            create={create}, modify={modify}, count={count}".format(
             id=self.id, name=self.name, intro=self.intro,
-            create=self.create_time, modify=self.modify_time
+            create=self.create_time, modify=self.modify_time,
+            count=self.content_count
         )

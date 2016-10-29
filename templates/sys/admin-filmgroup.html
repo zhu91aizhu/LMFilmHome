@@ -4,9 +4,33 @@
     {{ super() }}
 
     <script>
+        function addSuccess(data) {
+            if (data == "success") {
+                $(".am-modal-bd").html("添加成功");
+                $('#alert-confirm').modal({
+                    relatedTarget: this,
+                    onConfirm: function (options) {
+                        location = "/sys/filmgroup";
+                    },
+                    closeViaDimmer: false
+                });
+            }
+            else {
+                $(".am-modal-bd").html("添加失败");
+            }
+        }
+
         $(document).ready(function () {
             $(".am-btn").on("click", function () {
-                $(".am-form").submit();
+                var name = $("#filmgroup-name").val();
+                var intro = $("#filmgroup-intro").val();
+
+                var param = {
+                    "name": name,
+                    "intro": intro
+                };
+
+                $.post("/sys/filmgroup", param, addSuccess, "text");
             });
         });
     </script>
@@ -35,7 +59,8 @@
                     <div class="am-form-group">
                         <label for="filmgroup-intro" class="am-u-sm-3 am-form-label">简介</label>
                         <div class="am-u-sm-9">
-                            <textarea class="" rows="5" id="filmgroup-intro" name="filmgroup-intro" placeholder="电影组简介"></textarea>
+                            <textarea class="" rows="5" id="filmgroup-intro" name="filmgroup-intro"
+                                      placeholder="电影组简介"></textarea>
                         </div>
                     </div>
 
@@ -45,6 +70,17 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-alert" tabindex="-1" id="alert-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">提示</div>
+            <div class="am-modal-bd">
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
             </div>
         </div>
     </div>
