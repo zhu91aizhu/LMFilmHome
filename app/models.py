@@ -1,10 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase
+from . import db
 
 import uuid
 import datetime
-
-db = SQLAlchemy()
 
 class User(AbstractConcreteBase, db.Model):
 

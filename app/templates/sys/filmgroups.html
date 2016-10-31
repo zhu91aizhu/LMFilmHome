@@ -1,13 +1,55 @@
-{% extends "sys/admin-index.html" %}
+{% extends "sys/index.html" %}
 
 {% block head %}
     {{ super() }}
 
     <script>
+        function deleteFilmGroupCallback(data) {
+            var succ = data == "success" ? true : false;
+
+            if (succ) {
+                $("#alert-confirm .am-modal-bd").html("删除成功");
+            }
+            else {
+                $("#alert-confirm .am-modal-bd").html("删除失败");
+            }
+
+            $('#alert-confirm').modal({
+                relatedTarget: this,
+                onConfirm: function (options) {
+                    if (succ) {
+                        location = "/sys/filmgroup";
+                    }
+                },
+                closeViaDimmer: false
+            });
+        }
+
+        function deleteFilmGroup() {
+            var $this = $(this);
+            var id = $this.attr("data-id");
+
+            $('#delete-confirm').modal({
+                relatedTarget: this,
+                onConfirm: function (options) {
+                    var url = "/sys/filmgroup/" + id;
+                    $.ajax({
+                        url: url,
+                        type: "DELETE",
+                        dataType: "text",
+                        success: deleteFilmGroupCallback
+                    });
+                },
+                closeViaDimmer: false
+            });
+        }
+
         $(document).ready(function () {
             $("#btn-add-filmgroup").on("click", function () {
                 location = "/sys/filmgroup/new";
             });
+
+            $("input[name=btn-delete]").on("click", deleteFilmGroup);
         });
     </script>
 
@@ -59,11 +101,14 @@
                             <td>{{ fg.intro|short_intro }}</td>
                             <td>{{ fg.content_count }}</td>
                             <td>
-                                <input type="button" id="btn-modify" data-id="{{ fg.id }}" class="am-btn am-btn-secondary am-radius am-btn-sm"
+                                <input type="button" name="btn-modify" data-id="{{ fg.id }}"
+                                       class="am-btn am-btn-secondary am-radius am-btn-sm"
                                        value="修改"/>
-                                <input type="button" id="btn-delete" data-id="{{ fg.id }}" class="am-btn am-btn-warning am-radius am-btn-sm"
+                                <input type="button" name="btn-delete" data-id="{{ fg.id }}"
+                                       class="am-btn am-btn-warning am-radius am-btn-sm"
                                        value="删除"/>
-                                <input type="button" id="btn-list" data-id="{{ fg.id }}" class="am-btn am-btn-primary am-radius am-btn-sm"
+                                <input type="button" name="btn-list" data-id="{{ fg.id }}"
+                                       class="am-btn am-btn-primary am-radius am-btn-sm"
                                        value="电影列表"/>
                             </td>
                         </tr>
@@ -80,6 +125,19 @@
             <div class="am-modal-bd">
             </div>
             <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="delete-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">提示</div>
+            <div class="am-modal-bd">
+                确定要删除这条电影组记录吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
                 <span class="am-modal-btn" data-am-modal-confirm>确定</span>
             </div>
         </div>
