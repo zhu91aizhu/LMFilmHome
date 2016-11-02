@@ -44,12 +44,19 @@
             });
         }
 
+        function modifyFilmGroup() {
+            var $this = $(this);
+            var id = $this.attr("data-id");
+            location = "/sys/filmgroup/" + id + "/modify";
+        }
+
         $(document).ready(function () {
             $("#btn-add-filmgroup").on("click", function () {
                 location = "/sys/filmgroup/new";
             });
 
             $("input[name=btn-delete]").on("click", deleteFilmGroup);
+            $("input[name=btn-modify]").on("click", modifyFilmGroup);
         });
     </script>
 

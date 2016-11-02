@@ -4,9 +4,9 @@
     {{ super() }}
 
     <script>
-        function addSuccess(data) {
+        function saveSuccess(data) {
             if (data == "success") {
-                $(".am-modal-bd").html("添加成功");
+                $(".am-modal-bd").html("保存成功");
                 $('#alert-confirm').modal({
                     relatedTarget: this,
                     onConfirm: function (options) {
@@ -16,21 +16,37 @@
                 });
             }
             else {
-                $(".am-modal-bd").html("添加失败");
+                $(".am-modal-bd").html("保存失败");
             }
         }
 
         $(document).ready(function () {
             $(".am-btn").on("click", function () {
+                var $this = $(this);
+                var mod = $this.attr("data-mod");
+
+                var id = $("#filmgroup-id").val();
                 var name = $("#filmgroup-name").val();
                 var intro = $("#filmgroup-intro").val();
 
                 var param = {
+                    "id": id,
                     "name": name,
                     "intro": intro
                 };
 
-                $.post("/sys/filmgroup", param, addSuccess, "text");
+                if (mod == "new") {
+                    $.post("/sys/filmgroup", param, saveSuccess, "text");
+                }
+                else {
+                    $.ajax({
+                        url: "/sys/filmgroup/" + id,
+                        type: "PUT",
+                        data: param,
+                        dataType: "text",
+                        success: saveSuccess
+                    });
+                }
             });
         });
     </script>
@@ -49,24 +65,31 @@
         <div class="am-g">
             <div class="am-u-sm-12 am-u-md-8">
                 <form class="am-form am-form-horizontal" action="/sys/filmgroup" method="post">
+                    <input type="hidden" id="filmgroup-id" name="filmgroup-id" value="{{ fg.id }}" />
+
                     <div class="am-form-group">
                         <label for="filmgroup-name" class="am-u-sm-3 am-form-label">名称</label>
                         <div class="am-u-sm-9">
-                            <input type="text" id="filmgroup-name" name="filmgroup-name" placeholder="电影组名称">
+                            <input type="text" id="filmgroup-name" name="filmgroup-name" placeholder="电影组名称"
+                                value="{{ fg.name }}" />
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <label for="filmgroup-intro" class="am-u-sm-3 am-form-label">简介</label>
                         <div class="am-u-sm-9">
-                            <textarea class="" rows="5" id="filmgroup-intro" name="filmgroup-intro"
-                                      placeholder="电影组简介"></textarea>
+                            <textarea class="" rows="20" id="filmgroup-intro" name="filmgroup-intro"
+                                      placeholder="电影组简介">{{ fg.intro }}</textarea>
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <div class="am-u-sm-9 am-u-sm-push-3">
-                            <button type="button" class="am-btn am-btn-primary">保存修改</button>
+                            {% if mod == "modify" %}
+                                <button type="button" data-mod="{{ mod }}" class="am-btn am-btn-primary">保存</button>
+                            {% else %}
+                                <button type="button" data-mod="{{ mod }}" class="am-btn am-btn-primary">保存修改</button>
+                            {% endif %}
                         </div>
                     </div>
                 </form>
