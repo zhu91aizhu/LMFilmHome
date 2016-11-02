@@ -15,11 +15,21 @@ def sys_index():
 def sys_user():
     return render_template("sys/user.html")
 
-@main.route("/sys/filmgroup", methods=["GET"])
+@main.route("/sys/filmgroup", methods=["GET", "POST"])
 def get_filmgroups():
     """获取电影组列表"""
-    fgs = FilmGroup.query.all()
-    return render_template("sys/filmgroups.html", filmgroups=fgs)
+    if request.method == "GET":
+        fgs = FilmGroup.query.all()
+        return render_template("sys/filmgroups.html", filmgroups=fgs)
+    else:
+        ids = request.form["ids"]
+        ids = ids.split(",")
+        for id in ids:
+            fg = FilmGroup.query.filter_by(id =id).first()
+            db.session.delete(fg)
+            db.session.commit()
+
+        return "success"
 
 @main.route("/sys/filmgroup", methods=["POST"])
 def add_filmgroup():
