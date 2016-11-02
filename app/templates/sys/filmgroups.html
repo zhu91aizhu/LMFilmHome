@@ -4,6 +4,10 @@
     {{ super() }}
 
     <script>
+        /**
+         * 删除电影组回调
+         * @param data 回调数据
+         */
         function deleteFilmGroupCallback(data) {
             var succ = data == "success" ? true : false;
 
@@ -25,17 +29,23 @@
             });
         }
 
-        function deleteFilmGroup() {
-            var $this = $(this);
-            var id = $this.attr("data-id");
+        /**
+         * 显示确认提示框
+         * @param confirmText 显示文本
+         * @param url 请求地址
+         * @param type 请求方法
+         * @param data 请求数据
+         */
+        function showConfirmModal(confirmText, url, type, data) {
+            $("#delete-confirm .am-modal-bd").html(confirmText);
 
             $('#delete-confirm').modal({
                 relatedTarget: this,
                 onConfirm: function (options) {
-                    var url = "/sys/filmgroup/" + id;
                     $.ajax({
                         url: url,
-                        type: "DELETE",
+                        type: type,
+                        data: data,
                         dataType: "text",
                         success: deleteFilmGroupCallback
                     });
@@ -44,10 +54,42 @@
             });
         }
 
+        function deleteFilmGroup() {
+            var $this = $(this);
+            var id = $this.attr("data-id");
+
+            showConfirmModal("确定要删除这条电影组记录吗？", "/sys/filmgroup/" + id, "DELETE");
+        }
+
+        function multiDeleteFilmGroup() {
+            var ids = [];
+            $("input:checked").each(function () {
+                ids.push($(this).attr("data-id"));
+            });
+
+            var param = {
+                "ids": ids.join()
+            };
+
+            showConfirmModal("确定要删除选中的电影组记录吗？", "/sys/filmgroup", "POST", param);
+        }
+
         function modifyFilmGroup() {
             var $this = $(this);
             var id = $this.attr("data-id");
             location = "/sys/filmgroup/" + id + "/modify";
+        }
+
+        function allSelected() {
+            var status = $(this).is(":checked");
+            $("input[name=check-item]").each(function() {
+                if (status) {
+                    $(this).prop("checked", true);
+                }
+                else {
+                    $(this).prop("checked", false);
+                }
+            })
         }
 
         $(document).ready(function () {
@@ -57,6 +99,16 @@
 
             $("input[name=btn-delete]").on("click", deleteFilmGroup);
             $("input[name=btn-modify]").on("click", modifyFilmGroup);
+            $("#btn-multi-del-filmgroup").on("click", multiDeleteFilmGroup);
+            $("#cb-all-selected").on("click", allSelected);
+            $("input[name=check-item]").on("click", function () {
+                if ($("input[name=check-item]:checked").length == $("input[name=check-item]").length) {
+                    $("#cb-all-selected").prop("checked", true);
+                }
+                else {
+                    $("#cb-all-selected").prop("checked", false);
+                }
+            });
         });
     </script>
 
@@ -85,14 +137,14 @@
             <div class="am-u-sm-12">
                 <div class="am-form-group">
                     <input type="button" id="btn-add-filmgroup" class="am-btn am-btn-success am-radius" value="添加"/>
-                    <input type="button" id="btn-add-filmgroup" class="am-btn am-btn-warning am-radius" value="删除"/>
+                    <input type="button" id="btn-multi-del-filmgroup" class="am-btn am-btn-warning am-radius" value="删除"/>
                 </div>
 
                 <table class="am-table am-table-bordered am-table-radius am-table-striped am-table-hover">
                     <thead>
                     <tr>
                         <th style="width: 5%;">
-                            <input type="checkbox" class=".am-checkbox"/>
+                            <input type="checkbox" id="cb-all-selected" class=".am-checkbox"/>
                         </th>
                         <th>电影组名称</th>
                         <th>电影组简介</th>
@@ -103,7 +155,7 @@
                     <tbody>
                     {% for fg in filmgroups %}
                         <tr>
-                            <td><input type="checkbox"/></td>
+                            <td><input type="checkbox" name="check-item" data-id="{{ fg.id }}" /></td>
                             <td>{{ fg.name }}</td>
                             <td>{{ fg.intro|short_intro }}</td>
                             <td>{{ fg.content_count }}</td>
@@ -140,9 +192,7 @@
     <div class="am-modal am-modal-confirm" tabindex="-1" id="delete-confirm">
         <div class="am-modal-dialog">
             <div class="am-modal-hd">提示</div>
-            <div class="am-modal-bd">
-                确定要删除这条电影组记录吗？
-            </div>
+            <div class="am-modal-bd"></div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
                 <span class="am-modal-btn" data-am-modal-confirm>确定</span>
