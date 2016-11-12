@@ -92,6 +92,12 @@
             })
         }
 
+        function browserFilmGroup() {
+            var $this = $(this);
+            var id = $this.attr("data-id");
+            location = "/sys/filmgroup/" + id;
+        }
+
         $(document).ready(function () {
             $("#btn-add-filmgroup").on("click", function () {
                 location = "/sys/filmgroup/new";
@@ -109,6 +115,7 @@
                     $("#cb-all-selected").prop("checked", false);
                 }
             });
+            $("td[name=filmgroup-name]").on("click", browserFilmGroup);
         });
     </script>
 
@@ -156,7 +163,7 @@
                     {% for fg in filmgroups %}
                         <tr>
                             <td><input type="checkbox" name="check-item" data-id="{{ fg.id }}" /></td>
-                            <td>{{ fg.name }}</td>
+                            <td name="filmgroup-name" data-id="{{ fg.id }}">{{ fg.name }}</td>
                             <td>{{ fg.intro|short_intro }}</td>
                             <td>{{ fg.content_count }}</td>
                             <td>
