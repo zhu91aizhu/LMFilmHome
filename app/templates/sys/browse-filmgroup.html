@@ -1,0 +1,52 @@
+{% extends "sys/index.html" %}
+
+{% block head %}
+    {{ super() }}
+
+    <script>
+        function modifyFilmGroup() {
+            var $this = $(this);
+            var id = $this.attr("data-id");
+            location = "/sys/filmgroup/" + id + "/modify";
+        }
+
+        $(document).ready(function () {
+            $(".am-btn").on("click", modifyFilmGroup);
+        });
+    </script>
+{% endblock head %}
+
+{% block content %}
+    <div class="admin-content-body">
+        <div class="am-cf am-padding am-padding-bottom-0">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">内容设置</strong> /
+                <small>电影组</small>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="am-g">
+            <div class="am-u-sm-12">
+                <table class="am-table am-table-bordered am-table-radius am-table-striped am-table-hover">
+                    <tr>
+                        <td style="width: 20%;" class="am-primary">名称</td>
+                        <td>{{ fg.name }}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="am-primary">内容数量</td>
+                        <td>{{ fg.content_count }}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="am-primary">简介</td>
+                        <td>{{ fg.intro }}</td>
+                    </tr>
+                </table>
+
+                <button type="button" data-id="{{ fg.id }}" class="am-btn am-btn-primary">修改</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

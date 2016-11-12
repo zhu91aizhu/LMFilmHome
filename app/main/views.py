@@ -3,9 +3,7 @@ from . import main
 from .. import db
 from ..models import FilmGroup
 
-@main.route('/')
-def hello_world():
-    return 'Hello World!'
+import logging
 
 @main.route("/sys")
 def sys_index():
@@ -15,21 +13,33 @@ def sys_index():
 def sys_user():
     return render_template("sys/user.html")
 
-@main.route("/sys/filmgroup", methods=["GET", "POST"])
+@main.route("/sys/filmgroup", methods=["GET"])
 def get_filmgroups():
     """获取电影组列表"""
-    if request.method == "GET":
-        fgs = FilmGroup.query.all()
-        return render_template("sys/filmgroups.html", filmgroups=fgs)
-    else:
-        ids = request.form["ids"]
-        ids = ids.split(",")
+    fgs = FilmGroup.query.all()
+    return render_template("sys/filmgroups.html", filmgroups=fgs)
+
+@main.route("/sys/filmgroup", methods=["POST"])
+def delete_filmgroups():
+    """
+    删除多个电影组
+    :return: 成功返回 success，否则返回 failure
+    """
+    ids = request.form["ids"]
+    ids = ids.split(",")
+
+    try:
         for id in ids:
-            fg = FilmGroup.query.filter_by(id =id).first()
+            fg = FilmGroup.query.filter_by(id=id).first()
             db.session.delete(fg)
             db.session.commit()
+    except Exception as e:
+        logging.error("删除电影组失败: %s" % e)
+        return "failure"
 
-        return "success"
+    db.session.commit()
+
+    return "success"
 
 @main.route("/sys/filmgroup", methods=["POST"])
 def add_filmgroup():
@@ -42,7 +52,7 @@ def add_filmgroup():
         db.session.add(fg)
         db.session.commit()
     except Exception as e:
-        print ("error msg: %s" % e)
+        logging.error("添加电影组失败: %s" % e)
         return "failure"
 
     return "success"
@@ -57,7 +67,7 @@ def get_filmgroup(id):
     fg = FilmGroup.query.filter_by(id=id).first()
 
     if request.method == "GET":
-        return render_template("sys/filmgroup.html", mod="browse", fg=fg)
+        return render_template("sys/browse-filmgroup.html", fg=fg)
     else:
         name = request.form["name"]
         intro = request.form["intro"]
@@ -92,7 +102,7 @@ def delete_filmgroup(id):
         db.session.delete(fg)
         db.session.commit()
     except Exception as e:
-        print ("error msg: %s" % e)
+        logging.error("删除电影组失败: %s" % e)
         return "failure"
 
     return "success"
